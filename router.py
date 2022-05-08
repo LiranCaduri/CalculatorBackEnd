@@ -19,6 +19,7 @@ cache = {
     "last_answer": 0
 }
 
+
 @app.route('/', methods=['POST'])
 def calc():
     if len(dict(request.form)) < 3:
@@ -33,11 +34,9 @@ def cache_answer():
 
 
 def two_number_calculation():
-
     operations = get_calculation_methods()
 
     try:
-
         operator = request.form['operator']
         number1 = float(request.form['number1'])
         number2 = float(request.form['number2'])
@@ -45,7 +44,7 @@ def two_number_calculation():
     except ValueError:
         return """ERORR
                 Please enter only TWO valid numbers and ONE operator
-                or ONE number and ONE operator for continue a Calculation!"""
+                or ONE number and ONE operator to continue a Calculation!"""
 
     else:
         try:
@@ -60,7 +59,6 @@ def two_number_calculation():
 
 
 def one_number_calculation():
-
     operations = get_calculation_methods()
     recent_answer = cache["last_answer"]
 
@@ -68,7 +66,8 @@ def one_number_calculation():
         operator = request.form['operator']
         number = float(request.form['number1'])
 
-    except ValueError:
+    except (ValueError, KeyError):
+        # catch: ValueError - if user did'nt provide a number, KeyError -  if user did did'nt provide enough variables
         return """ERORR
                 Please enter only TWO valid numbers and ONE operator
                 or ONE number and ONE operator for continue a Calculation!"""

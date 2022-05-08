@@ -1,17 +1,15 @@
 from flask import Flask, request
 from CalculationsFunctions import get_calculation_methods
 
-'''
-TODOS
+"""
+Request Body
 
-1. floats only ✔
-2. manual unpacking ✔
-3. make in efficient
-4. code review
-5. make sure cache cannot be corapted ✔
-6. spelling (comments)
-
-'''
+{
+    operator: <char: (/, *, -, +)>
+    number1: <number>
+    number2: <number>, optional
+}
+"""
 
 app = Flask(__name__)
 
@@ -41,21 +39,24 @@ def two_number_calculation():
         number1 = float(request.form['number1'])
         number2 = float(request.form['number2'])
 
-    except ValueError:
+        answer = operations[operator](number1=number1, number2=number2)
+
+        cache["last_answer"] = 0  # reset the last calculation
+
+        # save last answer to allow continues calculations
+        cache["last_answer"] = float(answer)
+
+        return repr(answer)  # repr - solve str rounding
+
+    except (ValueError, KeyError):
+        """ catch:
+            ValueError - if user didn't provide a number,
+            KeyError -  if user did didn't provide enough variables or a valid operator
+        """
+
         return """ERORR
                 Please enter only TWO valid numbers and ONE operator
                 or ONE number and ONE operator to continue a Calculation!"""
-
-    else:
-        try:
-            answer = operations[operator](number1=number1, number2=number2)
-
-            cache["last_answer"] = 0  # reset the last calculation
-            cache["last_answer"] = float(answer)  # save last answer to allow continues calculations
-            return repr(answer)  # repr - solve str rounding
-
-        except KeyError:
-            return "Please enter a valid math operator!"
 
 
 def one_number_calculation():
@@ -66,22 +67,21 @@ def one_number_calculation():
         operator = request.form['operator']
         number = float(request.form['number1'])
 
+        answer = operations[operator](
+            number1=recent_answer, number2=number)
+
+        cache["last_answer"] = answer
+        return repr(answer)  # repr - solve str rounding
+
     except (ValueError, KeyError):
-        # catch: ValueError - if user did'nt provide a number, KeyError -  if user did did'nt provide enough variables
+        """ catch: 
+            ValueError - if user did'nt provide a number, 
+            KeyError -  if user did did'nt provide enough variables or a valid operator 
+        """
+
         return """ERORR
                 Please enter only TWO valid numbers and ONE operator
                 or ONE number and ONE operator for continue a Calculation!"""
-
-    else:
-        try:
-            answer = operations[operator](
-                number1=recent_answer, number2=number)
-
-            cache["last_answer"] = answer
-            return repr(answer)  # repr - solve str rounding
-
-        except KeyError:
-            return "Please enter a valid math operator!"
 
 
 if __name__ == '__main__':

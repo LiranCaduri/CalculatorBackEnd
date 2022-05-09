@@ -1,16 +1,16 @@
-def addition(number2, number1):
+def addition(number1, number2):
     return number1 + number2
 
 
-def substruct(number2, number1):
+def substruct(number1, number2):
     return number1 - number2
 
 
-def multiply(number2, number1):
+def multiply(number1, number2):
     return number1 * number2
 
 
-def division(number2, number1):
+def division(number1, number2):
     try:
         return number1 / number2
     except ZeroDivisionError as exception:

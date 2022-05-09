@@ -1,5 +1,5 @@
 from flask import Flask, request
-from CalculationsFunctions import get_calculation_methods
+from src.CalculationsFunctions import get_calculation_methods
 
 
 app = Flask(__name__)
@@ -9,14 +9,8 @@ cache = {
     "last_answer": 0
 }
 
-
-@app.route('/')
-def cache_answer():
-    return str(cache['last_answer'])
-
-
 @app.route('/', methods=['POST'])
-def calc():
+def index():
     try:
         if len(dict(request.form)) < 3:
             answer = one_number_calculation()
@@ -25,22 +19,24 @@ def calc():
        
         if(type(answer) is ZeroDivisionError):
             # response for Division in zero
-            return "Error: Division in 0"
+            return { "error": "Error: Division in 0" }
 
         # save last answer to allow continues calculations
         cache["last_answer"] = float(answer)
 
-        return repr(answer)  # repr - solve str rounding
+        return { "answer": repr(answer) }  # repr - solve str rounding
 
     except (ValueError, KeyError):
         """ catch:
             ValueError - if user didn't provide a number
-            KeyError -  if user did didn't provide enough variables or a valid operator
+            KeyError - if user did didn't provide enough variables or a valid operator
         """
 
-        return """ERORR
-                Please enter only TWO valid numbers and ONE operator
-                or ONE number and ONE operator to continue a Calculation!"""
+        return { 
+            "error": """ERORR:
+            Please enter only TWO valid numbers and ONE operator
+            or ONE number and ONE operator to continue a Calculation!"""
+        }
 
 
 def two_number_calculation():

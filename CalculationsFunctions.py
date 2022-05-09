@@ -13,8 +13,8 @@ def multiply(number2, number1):
 def division(number2, number1):
     try:
         return number1 / number2
-    except ZeroDivisionError:
-        return "Error Division in 0"
+    except ZeroDivisionError as exception:
+        return exception
 
 def get_calculation_methods():
     operations = {

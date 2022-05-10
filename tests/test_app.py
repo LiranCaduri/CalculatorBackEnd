@@ -130,7 +130,7 @@ def test_index_one_number_multiply(client):
     assert response.json["error"] == error_msg
 
 
-def test_index_division(client):
+def test_index_one_number_division(client):
     body = {
         "operator": "/",
         "number1": "10",
